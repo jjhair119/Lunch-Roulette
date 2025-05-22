@@ -36,14 +36,7 @@ const HomePage: React.FC = () => {
         }
     }, []);
 
-    // 로컬스토리지에 데이터 저장
-    useEffect(() => {
-        if (folders.length > 0) {
-            localStorage.setItem('lunchRouletteFolders', JSON.stringify(folders));
-        }
-    }, [folders]);
 
-    // 폴더 추가
     const addFolder = () => {
         if (newFolderName.trim()) {
             const newFolder: MenuFolder = {
@@ -57,7 +50,6 @@ const HomePage: React.FC = () => {
         }
     };
 
-    // 폴더 삭제
     const deleteFolder = (folderId: string) => {
         const remainingFolders = folders.filter(folder => folder.id !== folderId);
         setFolders(remainingFolders);
@@ -67,18 +59,15 @@ const HomePage: React.FC = () => {
         }
     };
 
-    // 폴더 선택 변경
     const handleFolderChange = (folderId: string) => {
         const folder = folders.find(f => f.id === folderId);
         setSelectedFolder(folder || null);
     };
 
-    // 메뉴를 사전순으로 정렬
     const getSortedMenus = (menus: MenuItem[]) => {
         return [...menus].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
     };
 
-    // 메뉴 추가
     const addMenu = () => {
         if (newMenuName.trim() && selectedFolder) {
             const newMenu: MenuItem = {
@@ -100,7 +89,6 @@ const HomePage: React.FC = () => {
         }
     };
 
-    // 메뉴 삭제
     const deleteMenu = (menuId: string) => {
         if (selectedFolder) {
             const updatedFolder = {
@@ -115,7 +103,6 @@ const HomePage: React.FC = () => {
         }
     };
 
-    // 메뉴 선택 토글
     const toggleMenuSelection = (menuId: string) => {
         if (selectedFolder) {
             const updatedFolder = {
@@ -132,7 +119,6 @@ const HomePage: React.FC = () => {
         }
     };
 
-    // 색상 관련 함수들
     const getColor = (index: number) => {
         const colors = [
             '#bfdbfe',
@@ -149,7 +135,6 @@ const HomePage: React.FC = () => {
         return index % 6 < 3 ? '#172554' : 'white';
     };
 
-    // 룰렛 데이터 준비
     const getRouletteData = () => {
         if (!selectedFolder) return [];
 
@@ -163,7 +148,6 @@ const HomePage: React.FC = () => {
         }));
     };
 
-    // 룰렛 돌리기
     const handleSpinClick = () => {
         const rouletteData = getRouletteData();
         if (rouletteData.length === 0) return;
@@ -173,14 +157,12 @@ const HomePage: React.FC = () => {
         setMustSpin(true);
     };
 
-    // 룰렛 정지
     const handleStopSpinning = () => {
         setMustSpin(false);
         const rouletteData = getRouletteData();
         setResult(rouletteData[prizeNumber].option);
     };
 
-    // 계산된 값들
     const rouletteData = getRouletteData();
     const selectedMenusCount = selectedFolder?.menus.filter(menu => menu.selected).length || 0;
     const sortedMenus = selectedFolder ? getSortedMenus(selectedFolder.menus) : [];
