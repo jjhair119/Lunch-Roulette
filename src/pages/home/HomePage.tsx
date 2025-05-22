@@ -200,6 +200,7 @@ const HomePage: React.FC = () => {
             <Header>
                 🍽️ 점심 메뉴 룰렛
             </Header>
+            <ScrollBarScreen/>
             <ScrollSection>
                 <FolderSection
                 selectedFolder={selectedFolder}
@@ -263,26 +264,12 @@ export default HomePage;
 
 const Container = styled.div`
     background-color: #eff6ff;
-    min-width: 100vh;
-    min-height: 100vh;
-    padding-top: 100px;
+    min-width: 100%;
+    min-height: 100%;
+    padding-top: 80px;
     padding-bottom: 20px;
-`;
-
-const ScrollSection = styled.div`
-    min-width: 100vh;
-    height: calc(100vh - 140px);
-    overflow-y: auto;
-
-    display: flex;
-    gap:12px;
-    flex-direction: column;
-    padding-bottom: 40px;
-
-    & > * {
-        max-width: 600px;
-        margin: 0 auto;
-    }
+    
+    overflow: auto;
 
     &::-webkit-scrollbar {
         width: 6px;
@@ -301,18 +288,49 @@ const ScrollSection = styled.div`
     &::-webkit-scrollbar-thumb:hover {
         background: #93c5fd;
     }
+`;
+
+const ScrollSection = styled.div`
+    width: 100%;
+    height: 100vh;
+    overflow: visible;
+
+    display: flex;
+    gap:20px;
+    flex-direction: column;
+    padding-bottom: 20px;
+    align-items: center;
+
+    & > * {
+        min-width: 200px;
+        max-width: 600px;
+        width: 80vw;
+    }
 `
 
 const Header = styled.div`
     text-align: center;
     color: #172554;
     font-weight: 700;
-    line-height: 100px;
+    line-height: 80px;
     font-size: 2.4rem;
     user-select: none;
     position: absolute;
+    width: 100%;
     
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+
+    backdrop-filter:blur(10px);
+    z-index: 100;
 `;
+
+const ScrollBarScreen = styled.div`
+    width: 6px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #eff6ff;
+`

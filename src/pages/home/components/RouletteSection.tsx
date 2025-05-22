@@ -77,12 +77,10 @@ export const RouletteSectionWrapper = styled.div`
     background: white;
     border-radius: 12px;
     padding: 20px;
-    width: 100%;
     text-align: center;
     justify-content: center;
     align-items: center;
     box-shadow: 0 2px 8px rgba(23, 37, 84, 0.1);
-
     height: min-content;
 `;
 

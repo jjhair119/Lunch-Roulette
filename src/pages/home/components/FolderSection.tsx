@@ -62,11 +62,8 @@ const FolderSectionWrapper = styled.div`
     background: white;
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(23, 37, 84, 0.1);
     height: min-content;
-
-    width: 100%;
 `;
 
 const FolderSelectContainer = styled.div`
