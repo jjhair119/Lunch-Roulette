@@ -44,14 +44,23 @@ export default function MenuSection(
 
         <MenuList>
             {sortedMenus.map(menu => (
-                <MenuItem key={menu.id} isSelected={menu.selected}>
+                <MenuItem
+                    key={menu.id}
+                    isSelected={menu.selected}
+                    onClick={() => toggleMenuSelection(menu.id)}
+                >
                     <MenuCheckbox
                         type="checkbox"
                         checked={menu.selected}
-                        onChange={() => toggleMenuSelection(menu.id)}
+                        onClick={(e) => e.stopPropagation()}
                     />
                     <MenuName isSelected={menu.selected}>{menu.name}</MenuName>
-                    <DeleteButton onClick={() => deleteMenu(menu.id)}>
+                    <DeleteButton
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            deleteMenu(menu.id);
+                        }}
+                    >
                         삭제
                     </DeleteButton>
                 </MenuItem>
@@ -116,7 +125,8 @@ const MenuList = styled.div`
     gap: 8px;
     max-height: 200px;
     overflow-y: auto;
-    padding-right: 8px;
+
+    padding: 4px;
 
     &::-webkit-scrollbar {
         width: 6px;
@@ -140,10 +150,12 @@ const MenuList = styled.div`
 const MenuItem = styled.div<{ isSelected: boolean }>`
     display: flex;
     align-items: center;
-    padding: 10px;
     background: ${props => props.isSelected ? '#eff6ff' : '#f8f9fa'};
     border-radius: 6px;
     border: 1px solid ${props => props.isSelected ? '#bfdbfe' : '#e5e7eb'};
+    transition: all 0.2s;
+    padding: 10px;
+    cursor: pointer;
 `;
 
 const MenuCheckbox = styled.input`

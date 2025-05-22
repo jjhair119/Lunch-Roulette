@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import styled from 'styled-components';
 import MenuSection from "@/pages/home/components/MenuSection.tsx";
 import FolderSection from "@/pages/home/components/FolderSection.tsx";
 import RouletteSection, {RouletteSectionWrapper} from "@/pages/home/components/RouletteSection.tsx";
 import FolderManagementPage from "@/pages/home/components/FolderManagementPage.tsx";
+import Alert from "@/common/components/Alert.tsx";
 
 export interface MenuItem {
     id: string;
@@ -27,6 +28,22 @@ const HomePage: React.FC = () => {
     const [result, setResult] = useState<string>('');
     const [showFolderManagement, setShowFolderManagement] = useState(false);
     const [manageFolderName, setManageFolderName] = useState('');
+    const [alert, setAlert] = useState(false);
+
+    useEffect(() => {
+        if (localStorage.getItem('lunchRouletteAlert') === null) {
+            localStorage.setItem('lunchRouletteAlert', JSON.stringify(false));
+        }
+        else if (localStorage.getItem('lunchRouletteAlert') === 'false') {
+            setAlert(true);
+        }
+    }, []);
+
+
+    const onClickAlertClose = () => {
+        setAlert(false);
+        localStorage.setItem('lunchRouletteAlert', JSON.stringify(true));
+    }
 
     useEffect(() => {
         if (folders.length > 0) {
@@ -44,7 +61,6 @@ const HomePage: React.FC = () => {
             }
         }
     }, []);
-
 
     const addFolder = () => {
         if (newFolderName.trim()) {
@@ -136,7 +152,7 @@ const HomePage: React.FC = () => {
             const updatedFolder = {
                 ...selectedFolder,
                 menus: selectedFolder.menus.map(menu =>
-                    menu.id === menuId ? { ...menu, selected: !menu.selected } : menu
+                    menu.id === menuId ? {...menu, selected: !menu.selected} : menu
                 )
             };
 
@@ -198,21 +214,28 @@ const HomePage: React.FC = () => {
     return (
         <Container>
             <Header>
+                <HeaderBackground/>
                 🍽️ 점심 메뉴 룰렛
             </Header>
+            <Alert
+                alert={alert}
+                closeAlert={onClickAlertClose}
+                title={"🍽 점심 메뉴 룰렛에 오신 것을 환영합니다!"}
+                message={"폴더와 메뉴는 로컬 기기에 저장됩니다.\n 다른 기기에서는 같은 사용할 수 없습니다."}
+            />
             <ScrollBarScreen/>
             <ScrollSection>
                 <FolderSection
-                selectedFolder={selectedFolder}
-                newFolderName={newFolderName}
-                setNewFolderName={setNewFolderName}
-                folders={folders}
-                setSelectedFolder={setSelectedFolder}
-                addFolder={addFolder}
-                deleteFolder={deleteFolder}
-                handleFolderChange={handleFolderChange}
-                setShowFolderManagement={setShowFolderManagement}
-            />
+                    selectedFolder={selectedFolder}
+                    newFolderName={newFolderName}
+                    setNewFolderName={setNewFolderName}
+                    folders={folders}
+                    setSelectedFolder={setSelectedFolder}
+                    addFolder={addFolder}
+                    deleteFolder={deleteFolder}
+                    handleFolderChange={handleFolderChange}
+                    setShowFolderManagement={setShowFolderManagement}
+                />
                 {selectedFolder && (
                     <MenuSection
                         selectedFolder={selectedFolder}
@@ -269,7 +292,7 @@ const Container = styled.div`
     padding-top: 80px;
     padding-bottom: 20px;
     height: 100vh;
-    
+
     overflow: auto;
 
     &::-webkit-scrollbar {
@@ -295,8 +318,9 @@ const ScrollSection = styled.div`
     width: 100%;
     overflow: visible;
     display: flex;
-    gap:20px;
+    gap: 20px;
     flex-direction: column;
+    padding-top: 20px;
     padding-bottom: 98px;
     align-items: center;
 
@@ -316,13 +340,22 @@ const Header = styled.div`
     user-select: none;
     position: absolute;
     width: 100%;
-    
+
     top: 0;
     left: 50%;
     transform: translateX(-50%);
 
-    backdrop-filter:blur(10px);
+    backdrop-filter: blur(10px);
     z-index: 100;
+`;
+
+const HeaderBackground = styled.div`
+    width: 100%;
+    height: 80px;
+    background-color: #dbeafe;
+    opacity: 0.4;
+    position: absolute;
+    z-index: -1;
 `;
 
 const ScrollBarScreen = styled.div`
