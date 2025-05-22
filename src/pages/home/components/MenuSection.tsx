@@ -1,0 +1,172 @@
+import React from "react";
+import styled from "styled-components";
+import type {MenuFolder, MenuItem} from "@/pages/home/HomePage.tsx";
+
+export default function MenuSection(
+    {
+        selectedFolder,
+        newMenuName,
+        setNewMenuName,
+        addMenu,
+        sortedMenus,
+        toggleMenuSelection,
+        deleteMenu,
+    }:{
+        selectedFolder:MenuFolder,
+        newMenuName:string,
+        setNewMenuName:(name:string) => void,
+        addMenu:() => void,
+        sortedMenus:MenuItem[],
+        toggleMenuSelection:(id:string) => void,
+        deleteMenu:(id:string) => void,
+    }) {
+    return <MenuSectionWrapper>
+        <div style={{ color: '#172554', marginBottom: '15px', fontWeight:'600', fontSize:"20px", userSelect:"none" }}>
+            "{selectedFolder.name}"의 메뉴
+        </div>
+        <MenuHeader>
+            <MenuInput
+                type="text"
+                placeholder="새 메뉴 이름을 입력하세요"
+                value={newMenuName}
+                onChange={(e) => setNewMenuName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addMenu()}
+            />
+            <Button onClick={addMenu} disabled={!newMenuName.trim()}>
+                메뉴 추가
+            </Button>
+        </MenuHeader>
+
+        <MenuList>
+            {sortedMenus.map(menu => (
+                <MenuItem key={menu.id} isSelected={menu.selected}>
+                    <MenuCheckbox
+                        type="checkbox"
+                        checked={menu.selected}
+                        onChange={() => toggleMenuSelection(menu.id)}
+                    />
+                    <MenuName isSelected={menu.selected}>{menu.name}</MenuName>
+                    <DeleteButton onClick={() => deleteMenu(menu.id)}>
+                        삭제
+                    </DeleteButton>
+                </MenuItem>
+            ))}
+        </MenuList>
+    </MenuSectionWrapper>
+}
+
+const Button = styled.button`
+    padding: 10px 15px;
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    user-select: none;
+    
+    &:hover {
+        background-color: #172554;
+    }
+
+    &:disabled {
+        background-color: #bfdbfe;
+        cursor: not-allowed;
+    }
+`;
+
+const MenuSectionWrapper = styled.div`
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(23, 37, 84, 0.1);
+
+    height: min-content;
+
+    width: 100%;
+`;
+
+const MenuHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+`;
+
+const MenuInput = styled.input`
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #bfdbfe;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-right: 10px;
+    &:focus {
+        outline: none;
+        border-color: #1d4ed8;
+    
+`;
+
+const MenuList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 8px;
+
+    /* 스크롤바 스타일링 */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #eff6ff;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #bfdbfe;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #1d4ed8;
+    }
+`;
+
+const MenuItem = styled.div<{ isSelected: boolean }>`
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: ${props => props.isSelected ? '#eff6ff' : '#f8f9fa'};
+    border-radius: 6px;
+    border: 1px solid ${props => props.isSelected ? '#bfdbfe' : '#e5e7eb'};
+`;
+
+const MenuCheckbox = styled.input`
+    margin-right: 10px;
+    transform: scale(1.2);
+`;
+
+const MenuName = styled.span<{ isSelected: boolean }>`
+    color: ${props => props.isSelected ? '#172554' : '#6b7280'};
+    font-weight: ${props => props.isSelected ? '500' : 'normal'};
+    flex: 1;
+`;
+
+const DeleteButton = styled.button`
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+
+    &:hover {
+        background: #dc2626;
+    }
+`;
