@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import MenuSection from "@/pages/home/components/MenuSection.tsx";
 import FolderSection from "@/pages/home/components/FolderSection.tsx";
 import RouletteSection, {RouletteSectionWrapper} from "@/pages/home/components/RouletteSection.tsx";
+import FolderManagementPage from "@/pages/home/components/FolderManagementPage.tsx";
 
 export interface MenuItem {
     id: string;
@@ -24,6 +25,14 @@ const HomePage: React.FC = () => {
     const [mustSpin, setMustSpin] = useState(false);
     const [prizeNumber, setPrizeNumber] = useState(0);
     const [result, setResult] = useState<string>('');
+    const [showFolderManagement, setShowFolderManagement] = useState(false);
+    const [manageFolderName, setManageFolderName] = useState('');
+
+    useEffect(() => {
+        if (folders.length > 0) {
+            localStorage.setItem('lunchRouletteFolders', JSON.stringify(folders));
+        }
+    }, [folders]);
 
     useEffect(() => {
         const savedFolders = localStorage.getItem('lunchRouletteFolders');
@@ -47,12 +56,31 @@ const HomePage: React.FC = () => {
             setFolders([...folders, newFolder]);
             setSelectedFolder(newFolder);
             setNewFolderName('');
+            setManageFolderName('');
         }
     };
+
+    const addFolderWithName = (name: string) => {
+        if (name.trim()) {
+            const newFolder: MenuFolder = {
+                id: Date.now().toString(),
+                name: name.trim(),
+                menus: []
+            };
+            setFolders([...folders, newFolder]);
+            setSelectedFolder(newFolder);
+            setNewFolderName('');
+            setManageFolderName('');
+        }
+    }
 
     const deleteFolder = (folderId: string) => {
         const remainingFolders = folders.filter(folder => folder.id !== folderId);
         setFolders(remainingFolders);
+
+        if (remainingFolders.length === 0) {
+            localStorage.removeItem('lunchRouletteFolders');
+        }
 
         if (selectedFolder?.id === folderId) {
             setSelectedFolder(remainingFolders[0] || null);
@@ -169,7 +197,9 @@ const HomePage: React.FC = () => {
 
     return (
         <Container>
-            <Header>🍽️ 점심 메뉴 룰렛</Header>
+            <Header>
+                🍽️ 점심 메뉴 룰렛
+            </Header>
             <ScrollSection>
                 <FolderSection
                 selectedFolder={selectedFolder}
@@ -180,6 +210,7 @@ const HomePage: React.FC = () => {
                 addFolder={addFolder}
                 deleteFolder={deleteFolder}
                 handleFolderChange={handleFolderChange}
+                setShowFolderManagement={setShowFolderManagement}
             />
                 {selectedFolder && (
                     <MenuSection
@@ -190,6 +221,7 @@ const HomePage: React.FC = () => {
                         sortedMenus={sortedMenus}
                         toggleMenuSelection={toggleMenuSelection}
                         deleteMenu={deleteMenu}
+                        deleteFolder={deleteFolder}
                     />
                 )}
                 {selectedFolder && rouletteData.length > 0 && (
@@ -211,6 +243,18 @@ const HomePage: React.FC = () => {
                     </RouletteSectionWrapper>
                 )}
             </ScrollSection>
+            {
+                showFolderManagement && (
+                    <FolderManagementPage
+                        folders={folders}
+                        addFolderWithName={addFolderWithName}
+                        deleteFolder={deleteFolder}
+                        setShowFolderManagement={setShowFolderManagement}
+                        manageFolderName={manageFolderName}
+                        setManageFolderName={setManageFolderName}
+                    />
+                )
+            }
         </Container>
     );
 };
@@ -255,7 +299,7 @@ const ScrollSection = styled.div`
     }
 
     &::-webkit-scrollbar-thumb:hover {
-        background: #1d4ed8;
+        background: #93c5fd;
     }
 `
 

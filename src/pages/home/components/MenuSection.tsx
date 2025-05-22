@@ -11,6 +11,7 @@ export default function MenuSection(
         sortedMenus,
         toggleMenuSelection,
         deleteMenu,
+        deleteFolder,
     }:{
         selectedFolder:MenuFolder,
         newMenuName:string,
@@ -19,10 +20,14 @@ export default function MenuSection(
         sortedMenus:MenuItem[],
         toggleMenuSelection:(id:string) => void,
         deleteMenu:(id:string) => void,
+        deleteFolder:(id:string) => void,
     }) {
     return <MenuSectionWrapper>
-        <div style={{ color: '#172554', marginBottom: '15px', fontWeight:'600', fontSize:"20px", userSelect:"none" }}>
-            "{selectedFolder.name}"의 메뉴
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", justifyItems:"center", marginBottom:"15px"}}>
+            <div style={{ color: '#172554', fontWeight:'600', fontSize:"20px", userSelect:"none", textAlign:"center"}}>
+                "{selectedFolder.name}"의 메뉴
+            </div>
+            <FolderDeleteButton onClick={() => deleteFolder(selectedFolder.id)}>폴더 "{selectedFolder.name}" 삭제</FolderDeleteButton>
         </div>
         <MenuHeader>
             <MenuInput
@@ -30,7 +35,7 @@ export default function MenuSection(
                 placeholder="새 메뉴 이름을 입력하세요"
                 value={newMenuName}
                 onChange={(e) => setNewMenuName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addMenu()}
+                onKeyUp={(e) => e.key === 'Enter' && addMenu()}
             />
             <Button onClick={addMenu} disabled={!newMenuName.trim()}>
                 메뉴 추가
@@ -116,7 +121,6 @@ const MenuList = styled.div`
     overflow-y: auto;
     padding-right: 8px;
 
-    /* 스크롤바 스타일링 */
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -132,7 +136,7 @@ const MenuList = styled.div`
     }
 
     &::-webkit-scrollbar-thumb:hover {
-        background: #1d4ed8;
+        background: #93c5fd;
     }
 `;
 
@@ -170,3 +174,19 @@ const DeleteButton = styled.button`
         background: #dc2626;
     }
 `;
+
+const FolderDeleteButton = styled.button`
+    padding: 8px;
+    background-color: white;
+    border: #ef4444 2px solid;
+    color: #ef4444;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background: #ef4444;
+        color: white;
+    }
+`

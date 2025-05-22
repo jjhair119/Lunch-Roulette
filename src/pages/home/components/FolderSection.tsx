@@ -11,7 +11,8 @@ export default function FolderSection(
         setSelectedFolder,
         addFolder,
         deleteFolder,
-        handleFolderChange
+        handleFolderChange,
+        setShowFolderManagement,
     }: {
         selectedFolder: MenuFolder | null;
         newFolderName: string;
@@ -21,11 +22,14 @@ export default function FolderSection(
         addFolder: () => void;
         deleteFolder: (id: string) => void;
         handleFolderChange: (id: string) => void;
-
+        setShowFolderManagement: (show: boolean) => void;
     }) {
 
     return <FolderSectionWrapper>
-        <div style={{ color: '#172554', marginBottom: '15px', fontWeight:'600', fontSize:"20px", userSelect:"none" }}>폴더</div>
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", justifyItems:"center", marginBottom:"15px"}}>
+            <div style={{ color: '#172554', fontWeight:'600', fontSize:"20px", userSelect:"none" }}>폴더</div>
+            <FolderManageBtn onClick={()=> setShowFolderManagement(true)}>폴더 관리</FolderManageBtn>
+        </div>
         <FolderSelectContainer>
             <FolderSelect
                 value={selectedFolder?.id || ''}
@@ -45,7 +49,7 @@ export default function FolderSection(
                 placeholder="새 폴더 이름을 입력하세요"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addFolder()}
+                onKeyUp={(e) => e.key === 'Enter' && addFolder()}
             />
             <Button onClick={addFolder} disabled={!newFolderName.trim()}>
                 폴더 추가
@@ -124,52 +128,18 @@ const Button = styled.button`
     }
 `;
 
-const FolderList = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-`;
 
-const FolderCard = styled.div<{ isSelected: boolean }>`
-    background: ${props => props.isSelected ? '#bfdbfe' : 'white'};
-    border: 2px solid ${props => props.isSelected ? '#1d4ed8' : '#bfdbfe'};
-    border-radius: 8px;
-    padding: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-        border-color: #1d4ed8;
-        transform: translateY(-2px);
-    }
-`;
-
-const FolderName = styled.h3`
-    color: #172554;
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-`;
-
-const MenuCount = styled.p`
-    color: #1d4ed8;
-    margin: 0;
-    font-size: 14px;
-`;
-
-const DeleteButton = styled.button`
-    background: #ef4444;
+const FolderManageBtn = styled.button`
+    padding: 10px;
+    background-color: #60a5fa;
     color: white;
     border: none;
-    border-radius: 4px;
-    padding: 5px 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 14px;
+    transition: background-color 0.2s;
 
     &:hover {
-        background: #dc2626;
+        background-color: #1d4ed8;
     }
 `;
