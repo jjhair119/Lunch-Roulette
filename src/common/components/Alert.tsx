@@ -24,7 +24,7 @@ export default function Alert(
 
 const AlertWrapper = styled.div<{ alert: boolean }>`
     position: absolute;
-    top: 100px;
+    top: 98px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -33,6 +33,7 @@ const AlertWrapper = styled.div<{ alert: boolean }>`
     background-color: #fef3c7;
     border-radius: 8px;
     width: fit-content;
+    min-width: 270px;
     padding: 20px;
     
     box-shadow: 0 0 14px 0 rgb(0, 0, 0, 0.3);
