@@ -268,6 +268,7 @@ const Container = styled.div`
     min-height: 100%;
     padding-top: 80px;
     padding-bottom: 20px;
+    height: 100vh;
     
     overflow: auto;
 
@@ -292,13 +293,11 @@ const Container = styled.div`
 
 const ScrollSection = styled.div`
     width: 100%;
-    height: 100vh;
     overflow: visible;
-
     display: flex;
     gap:20px;
     flex-direction: column;
-    padding-bottom: 20px;
+    padding-bottom: 98px;
     align-items: center;
 
     & > * {
