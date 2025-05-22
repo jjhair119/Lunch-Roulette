@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import type {MenuFolder, MenuItem} from "@/pages/home/HomePage.tsx";
+import {type MenuFolder, type MenuItem} from "@/pages/home/HomePage.tsx";
+import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
 
 export default function MenuSection(
     {
-        selectedFolder,
         newMenuName,
         setNewMenuName,
         addMenu,
@@ -13,7 +13,6 @@ export default function MenuSection(
         deleteMenu,
         deleteFolder,
     }:{
-        selectedFolder:MenuFolder,
         newMenuName:string,
         setNewMenuName:(name:string) => void,
         addMenu:() => void,
@@ -22,6 +21,10 @@ export default function MenuSection(
         deleteMenu:(id:string) => void,
         deleteFolder:(id:string) => void,
     }) {
+
+    const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
+    if (!selectedFolder) return null;
+
     return <MenuSectionWrapper>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", justifyItems:"center", marginBottom:"15px"}}>
             <div style={{ color: '#172554', fontWeight:'600', fontSize:"20px", userSelect:"none", textAlign:"center"}}>

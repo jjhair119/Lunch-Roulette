@@ -5,6 +5,8 @@ import FolderSection from "@/pages/home/components/FolderSection.tsx";
 import RouletteSection, {RouletteSectionWrapper} from "@/pages/home/components/RouletteSection.tsx";
 import FolderManagementPage from "@/pages/home/components/FolderManagementPage.tsx";
 import Alert from "@/common/components/Alert.tsx";
+import {useFolderStore} from "@/common/zustands/useFolerStore.ts";
+import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
 
 export interface MenuItem {
     id: string;
@@ -19,8 +21,6 @@ export interface MenuFolder {
 }
 
 const HomePage: React.FC = () => {
-    const [folders, setFolders] = useState<MenuFolder[]>([]);
-    const [selectedFolder, setSelectedFolder] = useState<MenuFolder | null>(null);
     const [newFolderName, setNewFolderName] = useState('');
     const [newMenuName, setNewMenuName] = useState('');
     const [mustSpin, setMustSpin] = useState(false);
@@ -29,6 +29,11 @@ const HomePage: React.FC = () => {
     const [showFolderManagement, setShowFolderManagement] = useState(false);
     const [manageFolderName, setManageFolderName] = useState('');
     const [alert, setAlert] = useState(false);
+
+    const folders = useFolderStore(set => set.folders);
+    const setFolders = useFolderStore(set => set.setFolders);
+    const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
+    const setSelectedFolder = useSelectedFolderStore(state => state.setSelectedFolder);
 
     useEffect(() => {
         if (localStorage.getItem('lunchRouletteAlert') === null) {
@@ -163,6 +168,16 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const renameFolder = (folderId: string, newName: string) => {
+        const updatedFolders = folders.map(folder =>
+            folder.id === folderId ? {...folder, name: newName} : folder
+        );
+        setFolders(updatedFolders);
+        if(selectedFolder && selectedFolder.id === folderId) {
+            setSelectedFolder({...selectedFolder, name: newName});
+        }
+    };
+
     const getColor = (index: number) => {
         const colors = [
             '#bfdbfe',
@@ -238,7 +253,6 @@ const HomePage: React.FC = () => {
                 />
                 {selectedFolder && (
                     <MenuSection
-                        selectedFolder={selectedFolder}
                         newMenuName={newMenuName}
                         setNewMenuName={setNewMenuName}
                         addMenu={addMenu}
@@ -261,8 +275,8 @@ const HomePage: React.FC = () => {
                 )}
                 {selectedFolder && rouletteData.length === 0 && (
                     <RouletteSectionWrapper>
-                        <div style={{color: '#172554', fontWeight: '600', fontSize: "18px", lineHeight: "40px"}}>
-                            선택된 메뉴가 없습니다. 메뉴를 추가하고 체크박스를 선택해주세요!
+                        <div style={{color: '#172554', fontWeight: '600', fontSize: "18px", padding: "8px 4px", userSelect: "none", lineHeight:"24px"}}>
+                            선택된 메뉴가 없습니다.<br/>메뉴를 추가하고 체크박스를 선택해주세요!
                         </div>
                     </RouletteSectionWrapper>
                 )}
@@ -276,6 +290,7 @@ const HomePage: React.FC = () => {
                         setShowFolderManagement={setShowFolderManagement}
                         manageFolderName={manageFolderName}
                         setManageFolderName={setManageFolderName}
+                        renameFolder={renameFolder}
                     />
                 )
             }

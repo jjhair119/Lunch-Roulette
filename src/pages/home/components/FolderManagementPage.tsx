@@ -10,6 +10,7 @@ export default function FolderManagementPage(
         setShowFolderManagement,
         manageFolderName,
         setManageFolderName,
+        renameFolder,
     }: {
         folders: MenuFolder[];
         addFolderWithName: (name: string) => void;
@@ -17,8 +18,30 @@ export default function FolderManagementPage(
         setShowFolderManagement: (show: boolean) => void;
         manageFolderName: string;
         setManageFolderName: (name: string) => void;
+        renameFolder: (folderId: string, newName: string) => void;
     }
 ) {
+
+    const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
+    const [editingFolderName, setEditingFolderName] = useState("");
+
+    const startEditFolder = (folder: MenuFolder) => {
+        setEditingFolderId(folder.id);
+        setEditingFolderName(folder.name);
+    };
+
+    const saveEditFolder = () => {
+        if (editingFolderId && editingFolderName.trim()) {
+            renameFolder(editingFolderId, editingFolderName);
+            setEditingFolderId(null);
+            setEditingFolderName("");
+        }
+    };
+
+    const cancelEditFolder = () => {
+        setEditingFolderId(null);
+        setEditingFolderName("");
+    };
 
     return <Container>
         <Background/>
@@ -34,10 +57,33 @@ export default function FolderManagementPage(
                 {folders.map(folder => (
                     <FolderCard key={folder.id} isSelected={false}>
                         <FolderName>
-                            <span>{folder.name}</span>
-                            <MenuCount>({folder.menus.length}개 메뉴)</MenuCount>
+                            {editingFolderId === folder.id ? (
+                                <EditInput
+                                    value={editingFolderName}
+                                    onChange={(e) => setEditingFolderName(e.target.value)}
+                                    onKeyUp={(e) => e.key === 'Enter' && saveEditFolder()}
+                                    autoFocus
+                                />
+                            ) : (
+                                <>
+                                    <span>{folder.name}</span>
+                                    <MenuCount>({folder.menus.length}개 메뉴)</MenuCount>
+                                </>
+                            )}
                         </FolderName>
-                        <DeleteButton onClick={() => deleteFolder(folder.id)}>삭제</DeleteButton>
+                        <ButtonGroup>
+                            {editingFolderId === folder.id ? (
+                                <>
+                                    <EditButton onClick={saveEditFolder}>저장</EditButton>
+                                    <CancelButton onClick={cancelEditFolder}>취소</CancelButton>
+                                </>
+                            ) : (
+                                <>
+                                    <EditButton onClick={() => startEditFolder(folder)}>수정</EditButton>
+                                    <DeleteButton onClick={() => deleteFolder(folder.id)}>삭제</DeleteButton>
+                                </>
+                            )}
+                        </ButtonGroup>
                     </FolderCard>
                 ))}
             </FolderList>
@@ -166,6 +212,7 @@ const FolderCard = styled.div<{ isSelected: boolean }>`
     display: flex;
     justify-content: space-between;
     width: calc(100% - 40px);
+    gap: 4px;
 
     &:hover {
         border-color: #1d4ed8;
@@ -259,4 +306,52 @@ const Background = styled.div`
     position: absolute;
     top: 0;
     left: 0;
+`;
+
+const ButtonGroup = styled.div`
+    display: flex;
+    gap: 4px;
+`;
+
+const EditButton = styled.button`
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+
+    &:hover {
+        background: #2563eb;
+    }
+`;
+
+const CancelButton = styled.button`
+    background: #9ca3af;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+
+    &:hover {
+        background: #6b7280;
+    }
+`;
+
+const EditInput = styled.input`
+    padding: 5px;
+    border: 2px solid #3b82f6;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    
+    &:focus {
+        outline: none;
+        border-color: #2563eb;
+    }
 `;
