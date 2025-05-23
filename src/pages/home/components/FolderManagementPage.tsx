@@ -39,28 +39,11 @@ export default function FolderManagementPage() {
         <Wrapper>
             <Header>
                 폴더 관리
-                <CloseButton onClick={() => setShowFolderManagement(false)}>×</CloseButton>
+                <CloseButton onClick={() => setShowFolderManagement(false)}>x</CloseButton>
             </Header>
             <CautionText>
                 ⚠️ 폴더를 삭제하면 폴더 내의 모든 메뉴가 삭제됩니다.
             </CautionText>
-
-            <FolderInputWrapper>
-                <FolderInput
-                    type="text"
-                    placeholder="새 폴더 이름을 입력하세요"
-                    value={manageFolderName}
-                    onChange={(e) => setManageFolderName(e.target.value)}
-                    onKeyUp={(e) => e.key === 'Enter' && addFolderWithName(manageFolderName)}
-                />
-                <Button
-                    onClick={() => addFolderWithName(manageFolderName)}
-                    disabled={!manageFolderName.trim()}
-                >
-                    폴더 추가
-                </Button>
-            </FolderInputWrapper>
-
             <FolderList>
                 {folders.map(folder => (
                     <FolderCard
