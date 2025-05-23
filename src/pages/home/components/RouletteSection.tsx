@@ -1,31 +1,31 @@
 import {Wheel} from "react-custom-roulette";
 import React from "react";
 import styled from "styled-components";
+import {useRouletteStore} from "@/common/zustands/useRouletteStore.ts";
+import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
 
 export default function RouletteSection(
     {
         selectedMenusCount,
-        rouletteData,
-        mustSpin,
-        prizeNumber,
-        handleSpinClick,
-        handleStopSpinning,
-        result
     }:{
         selectedMenusCount:number;
-        rouletteData: { option: string; style: { backgroundColor: string } }[];
-        mustSpin: boolean;
-        prizeNumber: number;
-        handleSpinClick: () => void;
-        handleStopSpinning: () => void;
-        result: string | null;
     }
 ){
+
+    const getRouletteData = useRouletteStore(state => state.getRouletteData);
+    const mustSpin = useRouletteStore(state => state.mustSpin);
+    const prizeNumber = useRouletteStore(state => state.prizeNumber);
+    const result = useRouletteStore(state => state.result);
+    const handleSpinClick = useRouletteStore(state => state.handleSpinClick);
+    const handleStopSpinning = useRouletteStore(state => state.handleStopSpinning);
+
+    const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
+    const rouletteData = selectedFolder ? getRouletteData() : [];
+
     return <RouletteSectionWrapper>
         <div style={{ color: '#172554', marginBottom: '15px', fontWeight:'600', fontSize:"20px", userSelect:"none"}}>
             🎯 점심 룰렛 ({selectedMenusCount}개 메뉴)
         </div>
-
 
         <div style={{
             display: 'flex',
@@ -63,11 +63,11 @@ export default function RouletteSection(
 
         {result ? (
             <Result>
-                🎉 오늘의 점심은 "{result}" 입니다!
+                { mustSpin ? "룰렛 돌리는 중..." : `🎉 오늘의 점심은 ${result} 입니다!`}
             </Result>
         ):(
             <Result>
-                룰렛을 돌려 점심 메뉴를 선택하세요!
+                { mustSpin ? "룰렛 돌리는 중..." : "룰렛을 돌려 점심 메뉴를 선택하세요!"}
             </Result>
         )}
     </RouletteSectionWrapper>

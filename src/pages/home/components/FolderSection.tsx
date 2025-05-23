@@ -1,34 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import type {MenuFolder} from "@/pages/home/HomePage.tsx";
+import {useFolderStore} from "@/common/zustands/useFolderStore.ts";
+import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
+import {useUIStore} from "@/common/zustands/useUIStore.ts";
 
-export default function FolderSection(
-    {
-        selectedFolder,
-        newFolderName,
-        setNewFolderName,
-        folders,
-        setSelectedFolder,
-        addFolder,
-        deleteFolder,
-        handleFolderChange,
-        setShowFolderManagement,
-    }: {
-        selectedFolder: MenuFolder | null;
-        newFolderName: string;
-        setNewFolderName: (name: string) => void;
-        folders: MenuFolder[];
-        setSelectedFolder: (folder: MenuFolder) => void;
-        addFolder: () => void;
-        deleteFolder: (id: string) => void;
-        handleFolderChange: (id: string) => void;
-        setShowFolderManagement: (show: boolean) => void;
-    }) {
+export default function FolderSection() {
+    const folders = useFolderStore(state => state.folders);
+    const newFolderName = useFolderStore(state => state.newFolderName);
+    const setNewFolderName = useFolderStore(state => state.setNewFolderName);
+    const addFolder = useFolderStore(state => state.addFolder);
+    const handleFolderChange = useFolderStore(state => state.handleFolderChange);
+
+    const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
+    const setShowFolderManagement = useUIStore(state => state.setShowFolderManagement);
 
     return <FolderSectionWrapper>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", justifyItems:"center", marginBottom:"15px"}}>
             <div style={{ color: '#172554', fontWeight:'600', fontSize:"20px", userSelect:"none" }}>폴더</div>
-            <FolderManageBtn onClick={()=> setShowFolderManagement(true)}>폴더 관리</FolderManageBtn>
+            <FolderManageButton onClick={()=> setShowFolderManagement(true)}>폴더 관리</FolderManageButton>
         </div>
         <FolderSelectContainer>
             <FolderSelect
@@ -126,7 +115,7 @@ const Button = styled.button`
 `;
 
 
-const FolderManageBtn = styled.button`
+const FolderManageButton = styled.button`
     padding: 10px;
     background-color: #60a5fa;
     color: white;

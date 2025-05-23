@@ -1,44 +1,35 @@
 import styled from "styled-components";
-import type {MenuFolder} from "@/pages/home/HomePage.tsx";
 import React, {useState} from "react";
+import {useFolderStore} from "@/common/zustands/useFolderStore.ts";
+import {useUIStore} from "@/common/zustands/useUIStore";
 
-export default function FolderManagementPage(
-    {
-        folders,
-        deleteFolder,
-        addFolderWithName,
-        setShowFolderManagement,
-        manageFolderName,
-        setManageFolderName,
-        renameFolder,
-    }: {
-        folders: MenuFolder[];
-        addFolderWithName: (name: string) => void;
-        deleteFolder: (folderId: string) => void;
-        setShowFolderManagement: (show: boolean) => void;
-        manageFolderName: string;
-        setManageFolderName: (name: string) => void;
-        renameFolder: (folderId: string, newName: string) => void;
-    }
-) {
+export default function FolderManagementPage() {
+    const folders = useFolderStore(state => state.folders);
+    const manageFolderName = useFolderStore(state => state.manageFolderName);
+    const setManageFolderName = useFolderStore(state => state.setManageFolderName);
+    const addFolderWithName = useFolderStore(state => state.addFolderWithName);
+    const deleteFolder = useFolderStore(state => state.deleteFolder);
+    const renameFolder = useFolderStore(state => state.renameFolder);
+
+    const setShowFolderManagement = useUIStore(state => state.setShowFolderManagement);
 
     const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
     const [editingFolderName, setEditingFolderName] = useState("");
 
-    const startEditFolder = (folder: MenuFolder) => {
-        setEditingFolderId(folder.id);
-        setEditingFolderName(folder.name);
+    const handleStartEdit = (folderId: string, folderName: string) => {
+        setEditingFolderId(folderId);
+        setEditingFolderName(folderName);
     };
 
-    const saveEditFolder = () => {
+    const handleSaveEdit = () => {
         if (editingFolderId && editingFolderName.trim()) {
-            renameFolder(editingFolderId, editingFolderName);
+            renameFolder(editingFolderId, editingFolderName.trim());
             setEditingFolderId(null);
             setEditingFolderName("");
         }
     };
 
-    const cancelEditFolder = () => {
+    const handleCancelEdit = () => {
         setEditingFolderId(null);
         setEditingFolderName("");
     };
@@ -47,43 +38,71 @@ export default function FolderManagementPage(
         <Background/>
         <Wrapper>
             <Header>
-                📁 폴더 관리
-                <CloseButton onClick={() => setShowFolderManagement(false)}>X</CloseButton>
+                폴더 관리
+                <CloseButton onClick={() => setShowFolderManagement(false)}>×</CloseButton>
             </Header>
             <CautionText>
-                ⚠️ 폴더를 삭제하면 해당 폴더에 속한 모든 메뉴가 삭제됩니다!
+                ⚠️ 폴더를 삭제하면 폴더 내의 모든 메뉴가 삭제됩니다.
             </CautionText>
+
+            <FolderInputWrapper>
+                <FolderInput
+                    type="text"
+                    placeholder="새 폴더 이름을 입력하세요"
+                    value={manageFolderName}
+                    onChange={(e) => setManageFolderName(e.target.value)}
+                    onKeyUp={(e) => e.key === 'Enter' && addFolderWithName(manageFolderName)}
+                />
+                <Button
+                    onClick={() => addFolderWithName(manageFolderName)}
+                    disabled={!manageFolderName.trim()}
+                >
+                    폴더 추가
+                </Button>
+            </FolderInputWrapper>
+
             <FolderList>
                 {folders.map(folder => (
-                    <FolderCard key={folder.id} $isSelected={false}>
-                        <FolderName>
-                            {editingFolderId === folder.id ? (
-                                <EditInput
-                                    value={editingFolderName}
-                                    onChange={(e) => setEditingFolderName(e.target.value)}
-                                    onKeyUp={(e) => e.key === 'Enter' && saveEditFolder()}
-                                    autoFocus
-                                />
-                            ) : (
-                                <>
+                    <FolderCard
+                        key={folder.id}
+                        $isSelected={folder.id === editingFolderId}
+                    >
+                        {folder.id === editingFolderId ? (
+                            <>
+                                <FolderName>
+                                    <EditInput
+                                        type="text"
+                                        value={editingFolderName}
+                                        onChange={(e) => setEditingFolderName(e.target.value)}
+                                        onKeyUp={(e) => e.key === 'Enter' && handleSaveEdit()}
+                                        autoFocus
+                                    />
+                                </FolderName>
+                                <ButtonGroup>
+                                    <EditButton onClick={handleSaveEdit}>
+                                        저장
+                                    </EditButton>
+                                    <CancelButton onClick={handleCancelEdit}>
+                                        취소
+                                    </CancelButton>
+                                </ButtonGroup>
+                            </>
+                        ) : (
+                            <>
+                                <FolderName>
                                     <span>{folder.name}</span>
                                     <MenuCount>({folder.menus.length}개 메뉴)</MenuCount>
-                                </>
-                            )}
-                        </FolderName>
-                        <ButtonGroup>
-                            {editingFolderId === folder.id ? (
-                                <>
-                                    <EditButton onClick={saveEditFolder}>저장</EditButton>
-                                    <CancelButton onClick={cancelEditFolder}>취소</CancelButton>
-                                </>
-                            ) : (
-                                <>
-                                    <EditButton onClick={() => startEditFolder(folder)}>수정</EditButton>
-                                    <DeleteButton onClick={() => deleteFolder(folder.id)}>삭제</DeleteButton>
-                                </>
-                            )}
-                        </ButtonGroup>
+                                </FolderName>
+                                <ButtonGroup>
+                                    <EditButton onClick={() => handleStartEdit(folder.id, folder.name)}>
+                                        수정
+                                    </EditButton>
+                                    <DeleteButton onClick={() => deleteFolder(folder.id)}>
+                                        삭제
+                                    </DeleteButton>
+                                </ButtonGroup>
+                            </>
+                        )}
                     </FolderCard>
                 ))}
             </FolderList>
@@ -124,8 +143,9 @@ const Wrapper = styled.div`
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(23, 37, 84, 0.1);
     height: 60%;
-    width: 50%;
+    width: 60%;
     min-width: 260px;
+    max-width: 500px;
     z-index: 1;
     gap: 16px;
 `;
@@ -212,7 +232,7 @@ const FolderCard = styled.div<{ $isSelected: boolean }>`
     display: flex;
     justify-content: space-between;
     width: calc(100% - 40px);
-    gap: 4px;
+    gap: 10px;
 
     &:hover {
         border-color: #1d4ed8;
@@ -243,7 +263,7 @@ const DeleteButton = styled.button`
     padding: 5px 8px;
     cursor: pointer;
     font-size: 12px;
-    
+
     user-select: none;
 
     &:hover {
@@ -349,7 +369,7 @@ const EditInput = styled.input`
     border-radius: 4px;
     font-size: 14px;
     width: 100%;
-    
+
     &:focus {
         outline: none;
         border-color: #2563eb;

@@ -1,28 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import {type MenuFolder, type MenuItem} from "@/pages/home/HomePage.tsx";
+import {type MenuItem} from "@/pages/home/HomePage.tsx";
+import { useFolderStore } from "@/common/zustands/useFolderStore.ts";
 import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
+import {useMenuStore} from "@/common/zustands/useMenuStore.ts";
 
-export default function MenuSection(
-    {
-        newMenuName,
-        setNewMenuName,
-        addMenu,
-        sortedMenus,
-        toggleMenuSelection,
-        deleteMenu,
-        deleteFolder,
-    }:{
-        newMenuName:string,
-        setNewMenuName:(name:string) => void,
-        addMenu:() => void,
-        sortedMenus:MenuItem[],
-        toggleMenuSelection:(id:string) => void,
-        deleteMenu:(id:string) => void,
-        deleteFolder:(id:string) => void,
-    }) {
-
+export default function MenuSection() {
     const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
+    const { newMenuName, setNewMenuName, addMenu, toggleMenuSelection, deleteMenu, getSortedMenus } = useMenuStore();
+    const { deleteFolder } = useFolderStore();
+
+    const sortedMenus = getSortedMenus();
+
     if (!selectedFolder) return null;
 
     return <MenuSectionWrapper>

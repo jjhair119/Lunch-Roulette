@@ -5,8 +5,10 @@ import FolderSection from "@/pages/home/components/FolderSection.tsx";
 import RouletteSection, {RouletteSectionWrapper} from "@/pages/home/components/RouletteSection.tsx";
 import FolderManagementPage from "@/pages/home/components/FolderManagementPage.tsx";
 import Alert from "@/common/components/Alert.tsx";
-import {useFolderStore} from "@/common/zustands/useFolerStore.ts";
+import {useFolderStore} from "@/common/zustands/useFolderStore.ts";
 import {useSelectedFolderStore} from "@/common/zustands/useSelectedFolderStore.ts";
+import {useUIStore} from "@/common/zustands/useUIStore.ts";
+import {useRouletteStore} from "@/common/zustands/useRouletteStore.ts";
 
 export interface MenuItem {
     id: string;
@@ -21,19 +23,19 @@ export interface MenuFolder {
 }
 
 const HomePage: React.FC = () => {
-    const [newFolderName, setNewFolderName] = useState('');
-    const [newMenuName, setNewMenuName] = useState('');
-    const [mustSpin, setMustSpin] = useState(false);
-    const [prizeNumber, setPrizeNumber] = useState(0);
-    const [result, setResult] = useState<string>('');
-    const [showFolderManagement, setShowFolderManagement] = useState(false);
-    const [manageFolderName, setManageFolderName] = useState('');
-    const [alert, setAlert] = useState(false);
+    const folders = useFolderStore(state => state.folders);
+    const setFolders = useFolderStore(state => state.setFolders);
 
-    const folders = useFolderStore(set => set.folders);
-    const setFolders = useFolderStore(set => set.setFolders);
     const selectedFolder = useSelectedFolderStore(state => state.selectedFolder);
     const setSelectedFolder = useSelectedFolderStore(state => state.setSelectedFolder);
+
+    const alert = useUIStore(state => state.alert);
+    const setAlert = useUIStore(state => state.setAlert);
+    const showFolderManagement = useUIStore(state => state.showFolderManagement);
+    const onClickAlertClose = useUIStore(state => state.onClickAlertClose);
+
+    const getRouletteData = useRouletteStore(state => state.getRouletteData);
+    const rouletteData = selectedFolder ? getRouletteData() : [];
 
     useEffect(() => {
         if (localStorage.getItem('lunchRouletteAlert') === null) {
@@ -43,13 +45,7 @@ const HomePage: React.FC = () => {
         else if (localStorage.getItem('lunchRouletteAlert') === 'false') {
             setAlert(true);
         }
-    }, []);
-
-
-    const onClickAlertClose = () => {
-        setAlert(false);
-        localStorage.setItem('lunchRouletteAlert', JSON.stringify(true));
-    }
+    }, [setAlert]);
 
     useEffect(() => {
         if (folders.length > 0) {
@@ -68,164 +64,7 @@ const HomePage: React.FC = () => {
         }
     }, [setFolders, setSelectedFolder]);
 
-    const addFolder = () => {
-        if (newFolderName.trim()) {
-            const newFolder: MenuFolder = {
-                id: Date.now().toString(),
-                name: newFolderName.trim(),
-                menus: []
-            };
-            setFolders([...folders, newFolder]);
-            setSelectedFolder(newFolder);
-            setNewFolderName('');
-            setManageFolderName('');
-        }
-    };
-
-    const addFolderWithName = (name: string) => {
-        if (name.trim()) {
-            const newFolder: MenuFolder = {
-                id: Date.now().toString(),
-                name: name.trim(),
-                menus: []
-            };
-            setFolders([...folders, newFolder]);
-            setSelectedFolder(newFolder);
-            setNewFolderName('');
-            setManageFolderName('');
-        }
-    }
-
-    const deleteFolder = (folderId: string) => {
-        const remainingFolders = folders.filter(folder => folder.id !== folderId);
-        setFolders(remainingFolders);
-
-        if (remainingFolders.length === 0) {
-            localStorage.removeItem('lunchRouletteFolders');
-        }
-
-        if (selectedFolder?.id === folderId) {
-            setSelectedFolder(remainingFolders[0] || null);
-        }
-    };
-
-    const handleFolderChange = (folderId: string) => {
-        const folder = folders.find(f => f.id === folderId);
-        setSelectedFolder(folder || null);
-    };
-
-    const getSortedMenus = (menus: MenuItem[]) => {
-        return [...menus].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-    };
-
-    const addMenu = () => {
-        if (newMenuName.trim() && selectedFolder) {
-            const newMenu: MenuItem = {
-                id: Date.now().toString(),
-                name: newMenuName.trim(),
-                selected: true
-            };
-
-            const updatedFolder = {
-                ...selectedFolder,
-                menus: [...selectedFolder.menus, newMenu]
-            };
-
-            setFolders(folders.map(folder =>
-                folder.id === selectedFolder.id ? updatedFolder : folder
-            ));
-            setSelectedFolder(updatedFolder);
-            setNewMenuName('');
-        }
-    };
-
-    const deleteMenu = (menuId: string) => {
-        if (selectedFolder) {
-            const updatedFolder = {
-                ...selectedFolder,
-                menus: selectedFolder.menus.filter(menu => menu.id !== menuId)
-            };
-
-            setFolders(folders.map(folder =>
-                folder.id === selectedFolder.id ? updatedFolder : folder
-            ));
-            setSelectedFolder(updatedFolder);
-        }
-    };
-
-    const toggleMenuSelection = (menuId: string) => {
-        if (selectedFolder) {
-            const updatedFolder = {
-                ...selectedFolder,
-                menus: selectedFolder.menus.map(menu =>
-                    menu.id === menuId ? {...menu, selected: !menu.selected} : menu
-                )
-            };
-
-            setFolders(folders.map(folder =>
-                folder.id === selectedFolder.id ? updatedFolder : folder
-            ));
-            setSelectedFolder(updatedFolder);
-        }
-    };
-
-    const renameFolder = (folderId: string, newName: string) => {
-        const updatedFolders = folders.map(folder =>
-            folder.id === folderId ? {...folder, name: newName} : folder
-        );
-        setFolders(updatedFolders);
-        if(selectedFolder && selectedFolder.id === folderId) {
-            setSelectedFolder({...selectedFolder, name: newName});
-        }
-    };
-
-    const getColor = (index: number) => {
-        const colors = [
-            '#bfdbfe',
-            '#93c5fd',
-            '#60a5fa',
-            '#3b82f6',
-            '#1d4ed8',
-            '#1e3a8a'
-        ];
-        return colors[index % colors.length];
-    };
-
-    const getTextColor = (index: number) => {
-        return index % 6 < 3 ? '#172554' : 'white';
-    };
-
-    const getRouletteData = () => {
-        if (!selectedFolder) return [];
-
-        const selectedMenus = selectedFolder.menus.filter(menu => menu.selected);
-        return selectedMenus.map((menu, index) => ({
-            option: menu.name,
-            style: {
-                backgroundColor: getColor(index),
-                textColor: getTextColor(index),
-            }
-        }));
-    };
-
-    const handleSpinClick = () => {
-        const rouletteData = getRouletteData();
-        if (rouletteData.length === 0) return;
-
-        const newPrizeNumber = Math.floor(Math.random() * rouletteData.length);
-        setPrizeNumber(newPrizeNumber);
-        setMustSpin(true);
-    };
-
-    const handleStopSpinning = () => {
-        setMustSpin(false);
-        const rouletteData = getRouletteData();
-        setResult(rouletteData[prizeNumber].option);
-    };
-
-    const rouletteData = getRouletteData();
     const selectedMenusCount = selectedFolder?.menus.filter(menu => menu.selected).length || 0;
-    const sortedMenus = selectedFolder ? getSortedMenus(selectedFolder.menus) : [];
 
     return (
         <Container>
@@ -241,37 +80,11 @@ const HomePage: React.FC = () => {
             />
             <ScrollBarScreen/>
             <ScrollSection>
-                <FolderSection
-                    selectedFolder={selectedFolder}
-                    newFolderName={newFolderName}
-                    setNewFolderName={setNewFolderName}
-                    folders={folders}
-                    setSelectedFolder={setSelectedFolder}
-                    addFolder={addFolder}
-                    deleteFolder={deleteFolder}
-                    handleFolderChange={handleFolderChange}
-                    setShowFolderManagement={setShowFolderManagement}
-                />
-                {selectedFolder && (
-                    <MenuSection
-                        newMenuName={newMenuName}
-                        setNewMenuName={setNewMenuName}
-                        addMenu={addMenu}
-                        sortedMenus={sortedMenus}
-                        toggleMenuSelection={toggleMenuSelection}
-                        deleteMenu={deleteMenu}
-                        deleteFolder={deleteFolder}
-                    />
-                )}
+                <FolderSection />
+                {selectedFolder && <MenuSection />}
                 {selectedFolder && rouletteData.length > 0 && (
                     <RouletteSection
                         selectedMenusCount={selectedMenusCount}
-                        rouletteData={rouletteData}
-                        mustSpin={mustSpin}
-                        prizeNumber={prizeNumber}
-                        handleSpinClick={handleSpinClick}
-                        handleStopSpinning={handleStopSpinning}
-                        result={result}
                     />
                 )}
                 {selectedFolder && rouletteData.length === 0 && (
@@ -282,19 +95,7 @@ const HomePage: React.FC = () => {
                     </RouletteSectionWrapper>
                 )}
             </ScrollSection>
-            {
-                showFolderManagement && (
-                    <FolderManagementPage
-                        folders={folders}
-                        addFolderWithName={addFolderWithName}
-                        deleteFolder={deleteFolder}
-                        setShowFolderManagement={setShowFolderManagement}
-                        manageFolderName={manageFolderName}
-                        setManageFolderName={setManageFolderName}
-                        renameFolder={renameFolder}
-                    />
-                )
-            }
+            {showFolderManagement && <FolderManagementPage />}
         </Container>
     );
 };
