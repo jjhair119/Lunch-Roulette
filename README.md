@@ -1,54 +1,44 @@
-# React + TypeScript + Vite
+# Lunch Roulette
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lunch Roulette is a fun web application that helps you decide what to eat for lunch by spinning a customizable roulette. Easily manage your menus and folders, spin the roulette, and let luck choose your next meal!
 
-Currently, two official plugins are available:
+## 🚀 Web Address
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Check out the live app here: [https://lunch-roulette-chi.vercel.app/](https://lunch-roulette-chi.vercel.app/)
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+![React](https://img.shields.io/badge/React-18.2.0-blue?style=flat&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue?style=flat&logo=typescript&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-4.2.0-blue?style=flat&logo=zustand&logoColor=white)
+![Styled Components](https://img.shields.io/badge/Styled%20Components-5.3.6-blue?style=flat&logo=styled-components&logoColor=white)
+- **React** 
+- **TypeScript**
+- **Zustand** (state management)
+- **styled-components** (styling)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## ✨ Features
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 1. How to Use the Roulette
+- **Add Folder:** Create a new folder for your menus.
+- **Add Menu:** Add menu items to a specific folder.
+- **Spin Roulette:** Click to spin and let the app pick your lunch!
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. Folder and Menu Management
+- **Manage folders** in a dedicated folder management modal.
+- **Choose menu participation:** For each folder, you can select whether menus added are included in the roulette spin.
+  > ⚠️ Data will NOT sync across different devices or browsers.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## 📋 Usage
+
+1. **Add Folder**: Create a new folder for your menus.
+2. **Add Menu**: Add menu items to a specific folder.
+3. **Spin Roulette**: Click to spin and let the app pick your lunch!
+4. **Manage Folders**: Open the folder management modal to edit or delete folders.
+5. **Select Menus**: Toggle which menus are included in the roulette for each folder.
+
+
+## 📷 Screenshots
+![Screenshot 1](public/assets/img/read-me/photo1.png)
+![Screenshot 2](public/assets/img/read-me/photo2.png)
+![Screenshot 3](public/assets/img/read-me/photo3.png)
