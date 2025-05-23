@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import MenuSection from "@/pages/home/components/MenuSection.tsx";
 import FolderSection from "@/pages/home/components/FolderSection.tsx";
@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
                 setSelectedFolder(parsedFolders[0]);
             }
         }
-    }, []);
+    }, [setFolders, setSelectedFolder]);
 
     const addFolder = () => {
         if (newFolderName.trim()) {
@@ -237,7 +237,7 @@ const HomePage: React.FC = () => {
                 alert={alert}
                 closeAlert={onClickAlertClose}
                 title={"🍽 점심 메뉴 룰렛에 오신 것을 환영합니다!"}
-                message={"폴더와 메뉴는 로컬 기기에 저장됩니다.\n 다른 기기에서는 같은 사용할 수 없습니다."}
+                message={"폴더와 메뉴는 로컬 기기에 저장됩니다.\n 다른 기기와 동기화되지 않습니다."}
             />
             <ScrollBarScreen/>
             <ScrollSection>
