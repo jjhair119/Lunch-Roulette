@@ -49,15 +49,18 @@ export default function MenuSection(
             {sortedMenus.map(menu => (
                 <MenuItem
                     key={menu.id}
-                    isSelected={menu.selected}
+                    $isSelected={menu.selected}
                     onClick={() => toggleMenuSelection(menu.id)}
                 >
                     <MenuCheckbox
                         type="checkbox"
                         checked={menu.selected}
-                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                            e.stopPropagation();
+                            toggleMenuSelection(menu.id);
+                        }}
                     />
-                    <MenuName isSelected={menu.selected}>{menu.name}</MenuName>
+                    <MenuName $isSelected={menu.selected}>{menu.name}</MenuName>
                     <DeleteButton
                         onClick={(e) => {
                             e.stopPropagation();
@@ -150,12 +153,12 @@ const MenuList = styled.div`
     }
 `;
 
-const MenuItem = styled.div<{ isSelected: boolean }>`
+const MenuItem = styled.div<{ $isSelected: boolean }>`
     display: flex;
     align-items: center;
-    background: ${props => props.isSelected ? '#eff6ff' : '#f8f9fa'};
+    background: ${props => props.$isSelected ? '#eff6ff' : '#f8f9fa'};
     border-radius: 6px;
-    border: 1px solid ${props => props.isSelected ? '#bfdbfe' : '#e5e7eb'};
+    border: 1px solid ${props => props.$isSelected ? '#bfdbfe' : '#e5e7eb'};
     transition: all 0.2s;
     padding: 10px;
     cursor: pointer;
@@ -166,9 +169,9 @@ const MenuCheckbox = styled.input`
     transform: scale(1.2);
 `;
 
-const MenuName = styled.span<{ isSelected: boolean }>`
-    color: ${props => props.isSelected ? '#172554' : '#6b7280'};
-    font-weight: ${props => props.isSelected ? '500' : 'normal'};
+const MenuName = styled.span<{ $isSelected: boolean }>`
+    color: ${props => props.$isSelected ? '#172554' : '#6b7280'};
+    font-weight: ${props => props.$isSelected ? '500' : 'normal'};
     flex: 1;
 `;
 

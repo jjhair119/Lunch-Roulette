@@ -13,7 +13,7 @@ export default function Alert(
         closeAlert:() => void,
     }
 ) {
-    return <AlertWrapper alert={alert}>
+    return <AlertWrapper $alert={alert}>
         <div>
             {title && <AlertTitle>{title}</AlertTitle>}
             {message && <AlertText>{message}</AlertText>}
@@ -22,7 +22,7 @@ export default function Alert(
     </AlertWrapper>
 }
 
-const AlertWrapper = styled.div<{ alert: boolean }>`
+const AlertWrapper = styled.div<{ $alert: boolean }>`
     position: absolute;
     top: 98px;
     left: 50%;
@@ -40,7 +40,7 @@ const AlertWrapper = styled.div<{ alert: boolean }>`
     
     box-shadow: 0 0 14px 0 rgb(0, 0, 0, 0.3);
     
-    ${({ alert }) => alert ? `
+    ${({ $alert }) => $alert ? `
         opacity: 1;
         transition: opacity 0.3s ease-in-out;
     ` : `
