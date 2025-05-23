@@ -38,6 +38,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         if (localStorage.getItem('lunchRouletteAlert') === null) {
             localStorage.setItem('lunchRouletteAlert', JSON.stringify(false));
+            setAlert(true);
         }
         else if (localStorage.getItem('lunchRouletteAlert') === 'false') {
             setAlert(true);
