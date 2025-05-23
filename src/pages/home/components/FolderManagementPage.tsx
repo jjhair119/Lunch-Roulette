@@ -202,7 +202,7 @@ const FolderList = styled.div`
     }
 `;
 
-const FolderCard = styled.div<{ isSelected: boolean }>`
+const FolderCard = styled.div<{ $isSelected: boolean }>`
     background: ${props => props.$isSelected ? '#bfdbfe' : 'white'};
     border: 2px solid ${props => props.$isSelected ? '#1d4ed8' : '#bfdbfe'};
     border-radius: 8px;
