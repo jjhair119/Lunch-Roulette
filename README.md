@@ -1,4 +1,4 @@
-# Lunch Roulette
+# Lunch Roulette 
 
 Lunch Roulette is a fun web application that helps you decide what to eat for lunch by spinning a customizable roulette. Easily manage your menus and folders, spin the roulette, and let luck choose your next meal!
 
